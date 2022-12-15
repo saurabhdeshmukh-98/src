@@ -15,7 +15,6 @@ const read = async (req, res) => {
     fs.unlinkSync(req.file.path)
     const sheetCount = wb.worksheets.length;
   
-    // Check empty sheets
     if (sheetCount === 0) {
       msg.push({ message: "Workbook empty." });
     } else {
@@ -23,7 +22,7 @@ const read = async (req, res) => {
         let sheet = wb.worksheets[i];
         sheet.eachRow({ includeEmpty: true }, (row, rowNumber) => {
           if (rowNumber === 1) {
-            // Checking if Header exists
+            
             if (!row.hasValues) {
               msg.push({ status: "Error", message: "Empty Headers" });
             } else if (row.values[1] !== "Name" || row.values[2] !== "Age") {
@@ -33,7 +32,7 @@ const read = async (req, res) => {
               });
             }
           }
-          // Checking only those rows which have a value
+          
           else if (row.hasValues) {
             const alphabetRegex = new RegExp(/[a-zA-Z]+/);
             const numberRegex = new RegExp(/[0-9]+/);
@@ -58,7 +57,7 @@ const read = async (req, res) => {
   console.log("Msg: ", msg);
   console.log("data: ", data);
   let resp;
-  if (errMsg.length > 0) {
+  if (msg.length > 0) {
     throw "Unable to Upload Excel file";
   } else {
     resp = await user.bulkCreate(data);
